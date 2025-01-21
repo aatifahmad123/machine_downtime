@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Machine Downtime Prediction</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 40px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #34495e;
+        margin-top: 40px;
+        font-size: 1.8rem;
+        font-weight: 600;
+        padding-left: 20px;
+      }
+
+      .section {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        font-size: 1.1rem;
+      }
+
+      input[type="file"],
+      textarea {
+        width: calc(100% - 24px); /* Adjusted for padding */
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #dcdcdc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      input[type="file"]:focus,
+      textarea:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        outline: none;
+      }
+
+      button {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: #ffffff;
+        border: none;
+        padding: 14px 24px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 10px; /* Added to match spacing */
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      #train-result,
+      #result {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #e1e1e1;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: #ecf0f1;
+        color: #2c3e50;
+        transition: opacity 0.3s ease;
+      }
+
+      #train-result {
+        color: #27ae60;
+        font-weight: bold;
+      }
+
+      #result {
+        color: #2c3e50;
+        font-weight: bold;
+      }
+
+      footer {
+        margin-top: 50px;
+        text-align: center;
+        font-size: 14px;
+        color: #7f8c8d;
+        padding: 20px;
+        background-color: #2c3e50;
+        color: #ffffff;
+        border-top: 1px solid #34495e;
+      }
+
+      .credit {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #2c3e50;
+      }
+
+      .credit a {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .credit a:hover {
+        text-decoration: underline;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .section {
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+        }
+
+        .section {
+          padding: 15px;
+        }
+
+        button {
+          width: 100%;
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Machine Downtime Prediction</h1>
+
+    <!-- Upload and Train Section -->
+    <div class="section">
+      <h2>Upload CSV File</h2>
+      <form id="upload-form" enctype="multipart/form-data" class="form-group">
+        <label for="file">Select CSV File:</label>
+        <input type="file" id="file" name="file" required />
+        <button type="button" onclick="uploadAndTrain()">
+          Upload and Train
+        </button>
+      </form>
+      <div id="train-result"></div>
+    </div>
+
+    <!-- Predict Section -->
+    <div class="section">
+      <h2>Predict</h2>
+      <form id="predict-form" class="form-group">
+        <label for="json-input">Enter JSON Data:</label>
+        <textarea
+          id="json-input"
+          rows="16"
+          cols="50"
+          placeholder='Enter JSON data directly as follows: 
+        
+{
+    "Hydraulic_Pressure_bar": 123.095808,
+    "Coolant_Pressure_bar": 3.053149,
+    "Air_System_Pressure_bar": 5.994826,
+    "Coolant_Temperature": 11.9,
+    "Hydraulic_Oil_Temperature_C": 47.3,
+    "Spindle_Bearing_Temperature_C": 34.5,
+    "Spindle_Vibration_m": 1.134,
+    "Tool_Vibration_m": 15.695,
+    "Spindle_Speed_RPM": 14266.0,
+    "Voltage_volts": 351.0,
+    "Torque_Nm": 22.884905,
+    "Cutting_kN": 1.95
+}'
+        ></textarea
+        ><br />
+        <button type="button" onclick="makePrediction()">Predict</button>
+      </form>
+      <div id="result"></div>
+    </div>
+
+    <!-- Credit Section -->
+    <div class="credit">
+      Developed by
+      <a href="https://github.com/aatifahmad123" target="_blank">Aatif Ahmad</a>
+    </div>
+
+    <footer>
+      &copy; 2025 Machine Downtime Prediction. All rights reserved.
+    </footer>
+
+    <script>
+      async function uploadAndTrain() {
+        const formData = new FormData(document.getElementById("upload-form"));
+        const response = await fetch("/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const result = await response.json();
+
+        const resultDiv = document.getElementById("train-result");
+        if (result.error) {
+          resultDiv.innerText = "Error: " + result.error;
+          resultDiv.style.color = "#e74c3c";
+        } else {
+          resultDiv.innerHTML = `
+                    <strong>Model trained successfully!</strong><br>
+                    <span>Accuracy: ${result.accuracy.toFixed(2)}</span><br>
+                    <span>Precision: ${result.precision.toFixed(2)}</span><br>
+                    <span>Recall: ${result.recall.toFixed(2)}</span>
+                `;
+          resultDiv.style.color = "#27ae60";
+        }
+      }
+
+      async function makePrediction() {
+        const input = document.getElementById("json-input").value;
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: input,
+        });
+        const result = await response.json();
+
+        const resultDiv = document.getElementById("result");
+        if (result.error) {
+          resultDiv.innerText = "Error: " + result.error;
+          resultDiv.style.color = "#e74c3c";
+        } else {
+          resultDiv.innerHTML = `<strong>Prediction:</strong> ${result.prediction}`;
+          resultDiv.style.color = "#2c3e50";
+        }
+      }
+    </script>
+  </body>
+</html>

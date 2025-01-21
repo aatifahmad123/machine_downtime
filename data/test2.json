@@ -1,0 +1,14 @@
+{
+    "Hydraulic_Pressure_bar": 71.04,
+    "Coolant_Pressure_bar": 6.933725,
+    "Air_System_Pressure_bar": 6.284965,
+    "Coolant_Temperature": 25.6,
+    "Hydraulic_Oil_Temperature_C": 46.0,
+    "Spindle_Bearing_Temperature_C": 33.4,
+    "Spindle_Vibration_m": 1.291,
+    "Tool_Vibration_m": 26.492,
+    "Spindle_Speed_RPM": 25892.0,
+    "Voltage_volts": 335.0,
+    "Torque_Nm": 24.055326,
+    "Cutting_kN": 3.58
+  }
